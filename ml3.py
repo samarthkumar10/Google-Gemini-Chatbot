@@ -3,7 +3,6 @@ import streamlit as st
 from dotenv import load_dotenv
 import google.generativeai as gen_ai
 
-# Load environment variables
 load_dotenv()
 
 st.set_page_config(
@@ -12,15 +11,13 @@ st.set_page_config(
     layout="centered",  
 )
 
-# Ensure the API key is correctly loaded
-GOOGLE_API_KEY = os.getenv("key") 
+GOOGLE_API_KEY = os.getenv("AIzaSyAfioOO5c75T5Zw_6JYSHpmphaucFIAi_o") 
 
 if not GOOGLE_API_KEY:
     st.error("API Key is missing! Check your .env file or set it manually.")
 else:
     gen_ai.configure(api_key=GOOGLE_API_KEY)
 
-# Initialize model
 try:
     model = gen_ai.GenerativeModel(model_name="gemini-pro")
 except Exception as e:
@@ -43,7 +40,6 @@ if "chat_session" in st.session_state and st.session_state.chat_session:
         with st.chat_message(translate_role_for_streamlit(message.role)):
             st.markdown(message.parts[0].text)
 
-# User input
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
     st.chat_message("user").markdown(user_prompt)
@@ -54,5 +50,4 @@ if user_prompt:
     except Exception as e:
         st.error(f"API Error: {e}")
 
-# Display API Key (Masked for security)
 st.write("API Key: ", GOOGLE_API_KEY[:4] + "********")
