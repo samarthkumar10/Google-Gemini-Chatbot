@@ -1,9 +1,7 @@
 import os
-
 import streamlit as st
 from dotenv import load_dotenv
 import google.generativeai as gen_ai
-
 
 # Load environment variables
 load_dotenv()
@@ -14,31 +12,38 @@ st.set_page_config(
     layout="centered",  
 )
 
-GOOGLE_API_KEY = os.getenv("AIzaSyBHSEqHYw2JjxlYp-BOqqCWaLcOD8Hdb3I")
+# Ensure the API key is correctly loaded
+GOOGLE_API_KEY = os.getenv("key") 
 
-gen_ai.configure(api_key=GOOGLE_API_KEY)
-model = gen_ai.GenerativeModel(model_name="gemini-pro")
+if not GOOGLE_API_KEY:
+    st.error("API Key is missing! Check your .env file or set it manually.")
+else:
+    gen_ai.configure(api_key=GOOGLE_API_KEY)
 
-
+# Initialize model
+try:
+    model = gen_ai.GenerativeModel(model_name="gemini-pro")
+except Exception as e:
+    st.error(f"Failed to initialize model: {e}")
 
 def translate_role_for_streamlit(user_role):
-    if user_role == "model":
-        return "assistant"
-    else:
-        return user_role
+    return "assistant" if user_role == "model" else user_role
 
-if "chat_session" not in st.session_state or not st.session_state.chat_session:
-    st.session_state.chat_session = model.start_chat(history=[])
-
-
+if "chat_session" not in st.session_state:
+    try:
+        st.session_state.chat_session = model.start_chat(history=[])
+    except Exception as e:
+        st.error(f"Error starting chat session: {e}")
 
 st.title("🤖 Gemini Pro - ChatBot")
 
-#chat history
-for message in st.session_state.chat_session.history:
-    with st.chat_message(translate_role_for_streamlit(message.role)):
-        st.markdown(message.parts[0].text)
+# Chat history
+if "chat_session" in st.session_state and st.session_state.chat_session:
+    for message in st.session_state.chat_session.history:
+        with st.chat_message(translate_role_for_streamlit(message.role)):
+            st.markdown(message.parts[0].text)
 
+# User input
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
     st.chat_message("user").markdown(user_prompt)
@@ -49,8 +54,5 @@ if user_prompt:
     except Exception as e:
         st.error(f"API Error: {e}")
 
-
-    with st.chat_message("assistant"):
-        st.markdown(gemini_response.text)
-
-st.write("API Key:", GOOGLE_API_KEY)
+# Display API Key (Masked for security)
+st.write("API Key: ", GOOGLE_API_KEY[:4] + "********")
