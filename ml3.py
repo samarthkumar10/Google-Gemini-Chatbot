@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered",  
 )
 
-GOOGLE_API_KEY = os.getenv("AIzaSyAfioOO5c75T5Zw_6JYSHpmphaucFIAi_o") 
+GOOGLE_API_KEY = os.getenv("key") 
 
 if not GOOGLE_API_KEY:
     st.error("API Key is missing! Check your .env file or set it manually.")
