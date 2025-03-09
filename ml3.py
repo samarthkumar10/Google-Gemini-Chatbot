@@ -14,7 +14,7 @@ st.set_page_config(
     layout="centered",  
 )
 
-GOOGLE_API_KEY = os.getenv("key")
+GOOGLE_API_KEY = os.getenv("AIzaSyCBEcZRApusjYqkRm1gQeMs9wl3BnRW51M")
 
 gen_ai.configure(api_key=GOOGLE_API_KEY)
 model = gen_ai.GenerativeModel(model_name="gemini-pro")
